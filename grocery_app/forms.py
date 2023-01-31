@@ -37,9 +37,9 @@ class GroceryItemForm(FlaskForm):
             Length(min=3, max=80, message="Your message needs to be betweeen 3 and 80 chars")
         ])
     price = FloatField('Price', validators=[DataRequired()])
-    cateogry = SelectField('Category',
+    category = SelectField('Category',
         validators=[DataRequired()],
-        chocies=[
+        choices=[
             ('PRODUCE','Produce'), 
             ('DELI ', 'Deli'), 
             ('BAKERY', 'Bakery'),
@@ -52,5 +52,5 @@ class GroceryItemForm(FlaskForm):
             DataRequired(), 
             Length(min=3, max=200, message="Your url needs to be betweeen 3 and 200 chars")
         ])
-    store = QuerySelectField('Store', query_factor=store_factory, validators=[DataRequired()])
+    store = QuerySelectField('Store', query_factory=store_factory, validators=[DataRequired()])
     submit = SubmitField('Submit')
