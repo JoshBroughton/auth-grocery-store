@@ -21,14 +21,23 @@ def homepage():
 @main.route('/new_store', methods=['GET', 'POST'])
 def new_store():
     # TODO: Create a GroceryStoreForm
-
+    form = GroceryStoreForm()
     # TODO: If form was submitted and was valid:
     # - create a new GroceryStore object and save it to the database,
     # - flash a success message, and
     # - redirect the user to the store detail page.
+    if form.validate_on_submit():
+        new_store = GroceryStore(
+            title=form.title.data,
+            address=form.title.data
+        )
+        db.session.add(new_store)
+        db.session.commit()
 
+        flash('New store created!')
+        return redirect(url_for('main.store_detail', store=new_store))
     # TODO: Send the form to the template and use it to render the form fields
-    return render_template('new_store.html')
+    return render_template('new_store.html', form=form)
 
 @main.route('/new_item', methods=['GET', 'POST'])
 def new_item():
@@ -67,14 +76,19 @@ def store_detail(store_id):
 @main.route('/item/<item_id>', methods=['GET', 'POST'])
 def item_detail(item_id):
     item = GroceryItem.query.get(item_id)
-    # TODO: Create a GroceryItemForm and pass in `obj=item`
+    form = GroceryItemForm(obj=item)
+    
+    if form.validate_on_submit():
+        item.name = form.name.data
+        item.price = form.price.data
+        item.category = form.category.data
+        item.photo_url = form.photo_url.data
+        item.store_id = form.store.data.id
+        
+        db.session.add(item)
+        db.session.commit()
 
-    # TODO: If form was submitted and was valid:
-    # - update the GroceryItem object and save it to the database,
-    # - flash a success message, and
-    # - redirect the user to the item detail page.
-
-    # TODO: Send the form to the template and use it to render the form fields
-    item = GroceryItem.query.get(item_id)
-    return render_template('item_detail.html', item=item)
+        flash('Item edited succesfully')
+ 
+    return render_template('item_detail.html', item=item, form=form)
 
