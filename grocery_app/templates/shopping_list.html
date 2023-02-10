@@ -3,12 +3,9 @@
 {% block content %}
   <h1>Shopping List</h1>
 
-  <form method="POST">
-    {{ form.csrf_token }} 
-    <ul>
-      {% for item in user.shopping_list_items %}
-        <li>{{ item.name }} {{ form.item_id(value=item.id) }} {{ form.delete }}</li>
-      {% endfor %}
-    </ul>
-  </form>
+  {% for item in user.shopping_list_items %}
+    <form method="POST">
+        {{ item.name }} {{ forms[item.id|string].item_id(value=item.id) }} {{ forms[item.id|string].delete }}</li>
+    </form>
+  {% endfor %}
 {% endblock %}

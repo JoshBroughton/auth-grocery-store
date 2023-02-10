@@ -18,7 +18,6 @@ auth = Blueprint("auth", __name__)
 @main.route('/')
 def homepage():
     all_stores = GroceryStore.query.all()
-    print(all_stores)
     return render_template('home.html', all_stores=all_stores)
 
 @main.route('/new_store', methods=['GET', 'POST'])
@@ -122,18 +121,24 @@ def add_to_shopping_list(item_id):
 @main.route('/shopping_list', methods=['GET', 'POST'])
 @login_required
 def shopping_list():
-    form = DeleteForm()
+    user = current_user
+    user_item_list = user.shopping_list_items
+    forms = {}
+    for item in user_item_list:
+        forms[f'{item.id}'] = DeleteForm()
 
-    if form.validate_on_submit():
-        user = current_user
-        print(form.item_id)
-        item = GroceryItem.query.get(form.item_id.data)
-        user.shopping_list_items.remove(item)
+    for form in forms.values():
+        if form.delete.data:
+            item_id = int(form.item_id.data)
+            item = GroceryItem.query.get(item_id)
         
-        db.session.add(user)
-        db.session.commit()
+            user.shopping_list_items.remove(item)
+            db.session.add(user)
+            db.session.commit()
 
-    return render_template('shopping_list.html', user=current_user, form=form)
+            return render_template('shopping_list.html', user=current_user, forms=forms)
+
+    return render_template('shopping_list.html', user=current_user, forms=forms)
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
