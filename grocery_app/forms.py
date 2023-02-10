@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, SubmitField, FloatField, ValidationError
+from wtforms import StringField, PasswordField, SelectField, SubmitField, FloatField, ValidationError, HiddenField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, Length
 from grocery_app.models import GroceryStore, User
@@ -75,3 +75,7 @@ class LoginForm(FlaskForm):
         if user and not bcrypt.check_password_hash(
                 user.password, password.data):
             raise ValidationError('Password doesn\'t match. Please try again.')
+
+class DeleteForm(FlaskForm):
+    item_id = HiddenField()
+    delete = SubmitField('Delete')
